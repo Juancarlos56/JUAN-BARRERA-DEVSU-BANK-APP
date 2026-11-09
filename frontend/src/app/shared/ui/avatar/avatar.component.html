@@ -1,0 +1,14 @@
+@if (showImage()) {
+  <img
+    class="avatar"
+    [src]="src()"
+    [alt]="'Logo de ' + name()"
+    loading="lazy"
+    decoding="async"
+    (error)="onImageError()"
+  />
+} @else {
+  <span class="avatar avatar--initials" role="img" [attr.aria-label]="'Logo de ' + name()">
+    {{ initials() }}
+  </span>
+}

@@ -1,0 +1,23 @@
+<nav class="paginator" aria-label="Paginación">
+  <button
+    type="button"
+    class="paginator__button"
+    aria-label="Página anterior"
+    [disabled]="!hasPrevious()"
+    (click)="previous()"
+  >
+    ‹
+  </button>
+  <span class="paginator__status" aria-live="polite">
+    Página {{ page() }} de {{ totalPages() }}
+  </span>
+  <button
+    type="button"
+    class="paginator__button"
+    aria-label="Página siguiente"
+    [disabled]="!hasNext()"
+    (click)="next()"
+  >
+    ›
+  </button>
+</nav>

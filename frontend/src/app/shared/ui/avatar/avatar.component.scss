@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+}
+
+.avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-avatar);
+
+  &--initials {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-surface);
+    user-select: none;
+  }
+}
