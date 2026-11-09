@@ -1,0 +1,34 @@
+<a class="form-page__back" routerLink="/products">‹ Volver al listado</a>
+
+<section class="form-page__card" aria-labelledby="form-page-title" [attr.aria-busy]="loading()">
+  <h1 id="form-page-title" class="form-page__title">Editar Producto</h1>
+  <div class="form-page__body">
+    @if (loading()) {
+      <div class="edit-skeleton" data-testid="form-skeleton">
+        @for (field of skeletonFields; track field) {
+          <div class="edit-skeleton__field">
+            <app-skeleton width="35%" />
+            <app-skeleton shape="rect" height="2.75rem" />
+          </div>
+        }
+      </div>
+    } @else if (loadError()) {
+      <div class="edit-error" role="alert">
+        <p class="edit-error__message">{{ loadError() }}</p>
+        <div class="edit-error__actions">
+          <button type="button" class="btn btn--secondary" (click)="loadProduct()">
+            Reintentar
+          </button>
+          <a class="btn btn--primary" routerLink="/products">Volver al listado</a>
+        </div>
+      </div>
+    } @else {
+      <app-product-form
+        [product]="product()"
+        [submitting]="submitting()"
+        submitLabel="Guardar"
+        (save)="onSave($event)"
+      />
+    }
+  </div>
+</section>

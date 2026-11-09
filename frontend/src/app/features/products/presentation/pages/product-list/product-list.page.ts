@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { PaginatorComponent } from '@shared/ui/paginator/paginator.component';
@@ -9,11 +9,12 @@ import {
   ProductListStore,
   isPageSize,
 } from '../../../application/state/product-list.store';
+import { Product } from '../../../domain';
 import { ProductTableComponent } from '../../components/product-table/product-table.component';
 
 export const SEARCH_DEBOUNCE_MS = 300;
 
-/** Página contenedora del listado (F1, F2, F3): conecta el store con la vista. */
+/** Página contenedora del listado (F1, F2, F3, F5): conecta el store con la vista. */
 @Component({
   selector: 'app-product-list-page',
   imports: [ProductTableComponent, PaginatorComponent, RouterLink],
@@ -23,6 +24,7 @@ export const SEARCH_DEBOUNCE_MS = 300;
 })
 export class ProductListPage implements OnInit {
   protected readonly store = inject(ProductListStore);
+  private readonly router = inject(Router);
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
   protected readonly emptyMessage = computed(() =>
     this.store.searchTerm()
@@ -51,5 +53,9 @@ export class ProductListPage implements OnInit {
     if (isPageSize(pageSize)) {
       this.store.setPageSize(pageSize);
     }
+  }
+
+  protected onEdit(product: Product): void {
+    void this.router.navigate(['/products', product.id, 'edit']);
   }
 }

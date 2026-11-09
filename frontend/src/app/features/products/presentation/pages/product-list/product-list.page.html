@@ -24,6 +24,7 @@
       [skeletonRows]="store.pageSize()"
       [emptyMessage]="emptyMessage()"
       (retry)="store.load()"
+      (edit)="onEdit($event)"
     />
 
     <footer class="product-list__footer">

@@ -15,4 +15,10 @@ export const PRODUCTS_ROUTES: Routes = [
         (m) => m.ProductCreatePage,
       ),
   },
+  {
+    path: ':id/edit',
+    title: 'Banco | Editar producto',
+    loadComponent: () =>
+      import('./presentation/pages/product-edit/product-edit.page').then((m) => m.ProductEditPage),
+  },
 ];

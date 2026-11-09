@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AppError } from '@core/errors/app-error';
@@ -56,6 +56,18 @@ describe('ProductListPage', () => {
     const add = element.querySelector<HTMLAnchorElement>('.product-list__add')!;
     expect(add.textContent!.trim()).toBe('Agregar');
     expect(add.getAttribute('href')).toBe('/new');
+  });
+
+  it('navega a la edición al elegir Editar en el menú de un producto (F5)', () => {
+    setup();
+    const router = TestBed.inject(Router);
+    const navigate = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    element.querySelector<HTMLButtonElement>('.dropdown__trigger')!.click();
+    fixture.detectChanges();
+    element.querySelector<HTMLButtonElement>('[role="menuitem"]')!.click();
+
+    expect(navigate).toHaveBeenCalledWith(['/products', 'id-1', 'edit']);
   });
 
   it('ofrece 5, 10 y 20 registros y cambia la cantidad mostrada', () => {
