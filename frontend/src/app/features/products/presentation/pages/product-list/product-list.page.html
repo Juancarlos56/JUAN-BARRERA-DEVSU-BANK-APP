@@ -1,0 +1,53 @@
+<section class="product-list" aria-labelledby="product-list-title">
+  <h1 id="product-list-title" class="visually-hidden">Productos financieros</h1>
+
+  <div class="product-list__toolbar">
+    <label for="product-search" class="visually-hidden">Buscar productos</label>
+    <input
+      #searchInput
+      id="product-search"
+      class="product-list__search"
+      type="search"
+      placeholder="Search..."
+      autocomplete="off"
+      [value]="store.searchTerm()"
+      (input)="onSearch(searchInput.value)"
+    />
+  </div>
+
+  <div class="product-list__card">
+    <app-product-table
+      [products]="store.visibleProducts()"
+      [loading]="store.isLoading()"
+      [error]="store.error()"
+      [skeletonRows]="store.pageSize()"
+      [emptyMessage]="emptyMessage()"
+      (retry)="store.load()"
+    />
+
+    <footer class="product-list__footer">
+      <p class="product-list__count" aria-live="polite">{{ store.totalResults() }} Resultados</p>
+
+      @if (store.totalPages() > 1) {
+        <app-paginator
+          [page]="store.page()"
+          [totalPages]="store.totalPages()"
+          (pageChange)="store.goToPage($event)"
+        />
+      }
+
+      <label for="page-size" class="visually-hidden">Cantidad de registros a mostrar</label>
+      <select
+        #pageSizeSelect
+        id="page-size"
+        class="product-list__page-size"
+        [value]="store.pageSize()"
+        (change)="onPageSizeChange(pageSizeSelect.value)"
+      >
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </footer>
+  </div>
+</section>
