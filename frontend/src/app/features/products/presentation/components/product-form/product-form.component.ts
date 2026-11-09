@@ -2,9 +2,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
+  effect,
   inject,
   input,
   output,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -29,6 +32,9 @@ import {
 /**
  * Formulario de producto (D2). Encapsula la construcción, validación y lectura del
  * formulario; quien lo usa solo recibe un `Product` válido mediante `save`.
+ *
+ * - Sin `product`: modo registro (F4), con verificación asíncrona del id.
+ * - Con `product`: modo edición (F5), id deshabilitado y mismas validaciones.
  */
 @Component({
   selector: 'app-product-form',
@@ -38,6 +44,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductFormComponent {
+  readonly product = input<Product | null>(null);
   readonly submitting = input(false);
   readonly submitLabel = input('Agregar');
   readonly save = output<Product>();
@@ -49,6 +56,7 @@ export class ProductFormComponent {
   private readonly today = (): string => toIsoDate(this.clock());
 
   protected readonly rules = PRODUCT_RULES;
+  protected readonly isEditMode = computed(() => this.product() !== null);
   protected readonly minReleaseDate = this.today();
 
   protected readonly form = this.formBuilder.group({
@@ -95,6 +103,13 @@ export class ProductFormComponent {
     // Con OnPush y sin zone.js, los cambios de estado que no vienen de un evento del DOM
     // (p. ej. el fin de la validación asíncrona del id) deben marcar la vista para revisión.
     this.form.events.pipe(takeUntilDestroyed()).subscribe(() => this.changeDetector.markForCheck());
+
+    effect(() => {
+      const product = this.product();
+      if (product) {
+        untracked(() => this.loadProduct(product));
+      }
+    });
   }
 
   protected errorFor(field: ProductFormField): string | null {
@@ -105,8 +120,11 @@ export class ProductFormComponent {
       : null;
   }
 
-  protected get isVerifyingId(): boolean {
-    return this.form.controls.id.pending;
+  protected get idHint(): string | null {
+    if (this.isEditMode()) {
+      return 'El ID no se puede modificar.';
+    }
+    return this.form.controls.id.pending ? 'Verificando ID...' : null;
   }
 
   protected get canSubmit(): boolean {
@@ -121,7 +139,23 @@ export class ProductFormComponent {
     this.save.emit(this.form.getRawValue());
   }
 
+  /** En edición, Reiniciar restaura los valores originales del producto. */
   protected onReset(): void {
+    const product = this.product();
+    if (product) {
+      this.loadProduct(product);
+      return;
+    }
     this.form.reset();
+  }
+
+  private loadProduct(product: Product): void {
+    const { id } = this.form.controls;
+    // El id no se edita: se deshabilita y no necesita verificarse contra la API.
+    id.clearAsyncValidators();
+    id.disable({ emitEvent: false });
+    this.form.reset(product);
+    // Muestra de inmediato si algún dato guardado ya no cumple las validaciones.
+    this.form.markAllAsTouched();
   }
 }

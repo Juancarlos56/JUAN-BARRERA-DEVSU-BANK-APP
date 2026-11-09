@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { CLOCK } from '@core/config/clock';
 import { VerifyProductIdUseCase } from '../../../application';
 import { Product } from '../../../domain';
+import { buildProduct } from '../../../testing/product.fixtures';
 import { ID_VERIFICATION_DEBOUNCE_MS } from '../../forms/product-form.validators';
 import { ProductFormComponent } from './product-form.component';
 
@@ -195,5 +196,77 @@ describe('ProductFormComponent', () => {
     Object.keys(VALID_VALUES).forEach((id) => expect(input(id).value).toBe(''));
     expect(input('product-date-revision').value).toBe('');
     expect(element.querySelectorAll('.form-field__error')).toHaveLength(0);
+  });
+
+  describe('modo edición (F5)', () => {
+    const existing = buildProduct({
+      id: 'trj-crd',
+      name: 'Tarjeta de Crédito',
+      dateRelease: '2026-12-01',
+      dateRevision: '2027-12-01',
+    });
+
+    const loadProduct = (product: Product) => {
+      fixture.componentRef.setInput('product', product);
+      fixture.componentRef.setInput('submitLabel', 'Guardar');
+      fixture.detectChanges();
+    };
+
+    it('carga los valores del producto y deshabilita el ID', () => {
+      loadProduct(existing);
+
+      expect(input('product-id').value).toBe('trj-crd');
+      expect(input('product-id').disabled).toBe(true);
+      expect(input('product-name').value).toBe('Tarjeta de Crédito');
+      expect(input('product-date-revision').value).toBe('2027-12-01');
+      expect(element.textContent).toContain('El ID no se puede modificar.');
+      expect(submitButton().textContent!.trim()).toBe('Guardar');
+    });
+
+    it('no verifica el ID contra la API', () => {
+      loadProduct(existing);
+      settleAsyncValidation();
+
+      expect(verify.execute).not.toHaveBeenCalled();
+      expect(submitButton().disabled).toBe(false);
+    });
+
+    it('mantiene las validaciones de F4 y muestra el error por campo', () => {
+      loadProduct(existing);
+
+      type('product-name', 'Tar');
+
+      expect(errorOf('product-name')).toBe('Debe tener mínimo 5 caracteres.');
+      expect(submitButton().disabled).toBe(true);
+    });
+
+    it('muestra de inmediato si la fecha guardada ya no es válida', () => {
+      loadProduct({ ...existing, dateRelease: '2025-01-01', dateRevision: '2026-01-01' });
+
+      expect(errorOf('product-date-release')).toBe(
+        'La fecha debe ser igual o mayor a la fecha actual.',
+      );
+      expect(submitButton().disabled).toBe(true);
+    });
+
+    it('emite el producto editado conservando el ID', () => {
+      loadProduct(existing);
+
+      type('product-name', 'Tarjeta Oro');
+      submitButton().click();
+
+      expect(saved).toEqual([{ ...existing, name: 'Tarjeta Oro' }]);
+    });
+
+    it('Reiniciar restaura los valores originales del producto', () => {
+      loadProduct(existing);
+      type('product-name', 'Otro nombre');
+
+      element.querySelector<HTMLButtonElement>('button.btn--secondary')!.click();
+      fixture.detectChanges();
+
+      expect(input('product-name').value).toBe('Tarjeta de Crédito');
+      expect(input('product-id').disabled).toBe(true);
+    });
   });
 });
