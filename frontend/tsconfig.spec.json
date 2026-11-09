@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "isolatedModules": true,
+    "esModuleInterop": true,
     "types": ["jest"]
   },
   "include": ["setup-jest.ts", "src/**/*.d.ts", "src/**/*.spec.ts"]

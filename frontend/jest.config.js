@@ -15,6 +15,7 @@ module.exports = {
     'src/app/**/*.ts',
     '!src/app/**/*.spec.ts',
     '!src/app/**/index.ts',
+    '!src/app/**/testing/**',
     '!src/app/app.config.ts',
     '!src/app/**/*.routes.ts',
   ],
