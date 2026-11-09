@@ -4,6 +4,7 @@ import { Subject, of, throwError } from 'rxjs';
 import { AppError } from '@core/errors/app-error';
 import { Product } from '../../domain';
 import { buildProduct } from '../../testing/product.fixtures';
+import { DeleteProductUseCase } from '../use-cases/delete-product.use-case';
 import { GetProductsUseCase } from '../use-cases/get-products.use-case';
 import { ProductListStore, isPageSize } from './product-list.store';
 
@@ -15,11 +16,16 @@ const buildProducts = (count: number): Product[] =>
 describe('ProductListStore', () => {
   let store: ProductListStore;
   let getProducts: { execute: jest.Mock };
+  let deleteProduct: { execute: jest.Mock };
 
   beforeEach(() => {
     getProducts = { execute: jest.fn() };
+    deleteProduct = { execute: jest.fn() };
     TestBed.configureTestingModule({
-      providers: [{ provide: GetProductsUseCase, useValue: getProducts }],
+      providers: [
+        { provide: GetProductsUseCase, useValue: getProducts },
+        { provide: DeleteProductUseCase, useValue: deleteProduct },
+      ],
     });
     store = TestBed.inject(ProductListStore);
   });
@@ -28,6 +34,43 @@ describe('ProductListStore', () => {
     getProducts.execute.mockReturnValue(of(products));
     store.load();
   };
+
+  describe('remove', () => {
+    it('elimina en la API y quita el producto del listado sin recargar', () => {
+      loadWith(buildProducts(3));
+      deleteProduct.execute.mockReturnValue(of(undefined));
+
+      store.remove('id-2').subscribe();
+
+      expect(deleteProduct.execute).toHaveBeenCalledWith('id-2');
+      expect(store.visibleProducts().map((p) => p.id)).toEqual(['id-1', 'id-3']);
+      expect(store.totalResults()).toBe(2);
+      expect(getProducts.execute).toHaveBeenCalledTimes(1);
+    });
+
+    it('conserva el producto y propaga el error si la eliminación falla', () => {
+      loadWith(buildProducts(3));
+      const error = new AppError('not-found', 'No existe');
+      deleteProduct.execute.mockReturnValue(throwError(() => error));
+      let received: unknown;
+
+      store.remove('id-2').subscribe({ error: (e) => (received = e) });
+
+      expect(received).toBe(error);
+      expect(store.totalResults()).toBe(3);
+    });
+
+    it('vuelve a una página válida si se elimina el último producto de la página', () => {
+      loadWith(buildProducts(6));
+      store.goToPage(2);
+      deleteProduct.execute.mockReturnValue(of(undefined));
+
+      store.remove('id-6').subscribe();
+
+      expect(store.page()).toBe(1);
+      expect(store.totalPages()).toBe(1);
+    });
+  });
 
   it('inicia sin productos, en la página 1 y con 5 registros por página', () => {
     expect(store.visibleProducts()).toEqual([]);

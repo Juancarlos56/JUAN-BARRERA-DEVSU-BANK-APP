@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, tap } from 'rxjs';
 
 import { toErrorMessage } from '@core/errors/error-message';
 import { Product } from '../../domain';
+import { DeleteProductUseCase } from '../use-cases/delete-product.use-case';
 import { GetProductsUseCase } from '../use-cases/get-products.use-case';
 import { filterProducts } from './product-filter';
 
@@ -38,6 +39,7 @@ const INITIAL_STATE: ProductListState = {
 @Injectable({ providedIn: 'root' })
 export class ProductListStore {
   private readonly getProducts = inject(GetProductsUseCase);
+  private readonly deleteProduct = inject(DeleteProductUseCase);
   private readonly state = signal<ProductListState>(INITIAL_STATE);
   private loadSubscription?: Subscription;
 
@@ -59,6 +61,21 @@ export class ProductListStore {
     const start = (this.page() - 1) * this.pageSize();
     return this.filteredProducts().slice(start, start + this.pageSize());
   });
+
+  /**
+   * Elimina el producto en la API y, si tiene éxito, lo quita del estado local
+   * sin volver a pedir todo el listado. Devuelve el observable para que la vista
+   * decida cómo informar el resultado.
+   */
+  remove(id: string): Observable<void> {
+    return this.deleteProduct
+      .execute(id)
+      .pipe(
+        tap(() =>
+          this.patch({ products: this.state().products.filter((product) => product.id !== id) }),
+        ),
+      );
+  }
 
   load(): void {
     this.loadSubscription?.unsubscribe();
