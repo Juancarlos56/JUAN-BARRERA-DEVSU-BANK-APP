@@ -1,0 +1,29 @@
+@if (open()) {
+  <!-- El fondo cierra el modal con el mouse; con teclado se usa Escape o el botón Cancelar. -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+  <div class="modal__backdrop" (click)="onBackdropClick($event)">
+    <div
+      class="modal"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-message"
+      [attr.aria-busy]="busy()"
+    >
+      <p id="confirm-modal-message" class="modal__message">{{ message() }}</p>
+      <div class="modal__actions">
+        <button
+          #cancelButton
+          type="button"
+          class="btn btn--secondary"
+          [disabled]="busy()"
+          (click)="onCancel()"
+        >
+          {{ cancelLabel() }}
+        </button>
+        <button type="button" class="btn btn--primary" [disabled]="busy()" (click)="onConfirm()">
+          {{ busy() ? busyLabel() : confirmLabel() }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
