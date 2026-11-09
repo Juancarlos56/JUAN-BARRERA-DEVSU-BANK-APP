@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { PaginatorComponent } from '@shared/ui/paginator/paginator.component';
@@ -15,7 +16,7 @@ export const SEARCH_DEBOUNCE_MS = 300;
 /** Página contenedora del listado (F1, F2, F3): conecta el store con la vista. */
 @Component({
   selector: 'app-product-list-page',
-  imports: [ProductTableComponent, PaginatorComponent],
+  imports: [ProductTableComponent, PaginatorComponent, RouterLink],
   templateUrl: './product-list.page.html',
   styleUrl: './product-list.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { AppError } from '@core/errors/app-error';
@@ -21,7 +22,7 @@ describe('ProductListPage', () => {
     getProducts = { execute: jest.fn().mockReturnValue(response) };
     TestBed.configureTestingModule({
       imports: [ProductListPage],
-      providers: [{ provide: GetProductsUseCase, useValue: getProducts }],
+      providers: [provideRouter([]), { provide: GetProductsUseCase, useValue: getProducts }],
     });
     fixture = TestBed.createComponent(ProductListPage);
     element = fixture.nativeElement as HTMLElement;
@@ -47,6 +48,14 @@ describe('ProductListPage', () => {
     expect(getProducts.execute).toHaveBeenCalledTimes(1);
     expect(rows()).toHaveLength(5);
     expect(count()).toBe('12 Resultados');
+  });
+
+  it('muestra el botón Agregar que navega al formulario de registro', () => {
+    setup();
+
+    const add = element.querySelector<HTMLAnchorElement>('.product-list__add')!;
+    expect(add.textContent!.trim()).toBe('Agregar');
+    expect(add.getAttribute('href')).toBe('/new');
   });
 
   it('ofrece 5, 10 y 20 registros y cambia la cantidad mostrada', () => {

@@ -58,7 +58,8 @@
 
 @media (max-width: 600px) {
   .product-list {
-    &__search {
+    &__search,
+    &__add {
       width: 100%;
     }
 

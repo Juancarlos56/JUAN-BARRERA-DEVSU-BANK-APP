@@ -1,0 +1,52 @@
+// Layout compartido por las páginas de registro y edición (D2).
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.form-page {
+  &__back {
+    align-self: flex-start;
+    font-size: var(--font-size-sm);
+    color: var(--color-brand);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__card {
+    width: 100%;
+    max-width: 54rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &__title {
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+  }
+
+  &__body {
+    padding: var(--space-5) var(--space-7) var(--space-6);
+  }
+}
+
+@media (max-width: 600px) {
+  .form-page {
+    &__title {
+      font-size: var(--font-size-lg);
+    }
+
+    &__body {
+      padding: var(--space-4);
+    }
+  }
+}

@@ -7,4 +7,12 @@ export const PRODUCTS_ROUTES: Routes = [
     loadComponent: () =>
       import('./presentation/pages/product-list/product-list.page').then((m) => m.ProductListPage),
   },
+  {
+    path: 'new',
+    title: 'Banco | Agregar producto',
+    loadComponent: () =>
+      import('./presentation/pages/product-create/product-create.page').then(
+        (m) => m.ProductCreatePage,
+      ),
+  },
 ];

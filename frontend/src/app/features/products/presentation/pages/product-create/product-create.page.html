@@ -1,0 +1,8 @@
+<a class="form-page__back" routerLink="/products">‹ Volver al listado</a>
+
+<section class="form-page__card" aria-labelledby="form-page-title">
+  <h1 id="form-page-title" class="form-page__title">Formulario de Registro</h1>
+  <div class="form-page__body">
+    <app-product-form [submitting]="submitting()" (save)="onSave($event)" />
+  </div>
+</section>
