@@ -1,0 +1,103 @@
+<form class="product-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="product-form__grid">
+    <app-form-field
+      label="ID"
+      controlId="product-id"
+      [error]="errorFor('id')"
+      [hint]="isVerifyingId ? 'Verificando ID...' : null"
+    >
+      <input
+        id="product-id"
+        class="input"
+        type="text"
+        formControlName="id"
+        autocomplete="off"
+        [attr.maxlength]="rules.id.maxLength"
+        [attr.aria-invalid]="!!errorFor('id')"
+        aria-describedby="product-id-message"
+      />
+    </app-form-field>
+
+    <app-form-field label="Nombre" controlId="product-name" [error]="errorFor('name')">
+      <input
+        id="product-name"
+        class="input"
+        type="text"
+        formControlName="name"
+        [attr.maxlength]="rules.name.maxLength"
+        [attr.aria-invalid]="!!errorFor('name')"
+        aria-describedby="product-name-message"
+      />
+    </app-form-field>
+
+    <app-form-field
+      label="Descripción"
+      controlId="product-description"
+      [error]="errorFor('description')"
+    >
+      <input
+        id="product-description"
+        class="input"
+        type="text"
+        formControlName="description"
+        [attr.maxlength]="rules.description.maxLength"
+        [attr.aria-invalid]="!!errorFor('description')"
+        aria-describedby="product-description-message"
+      />
+    </app-form-field>
+
+    <app-form-field label="Logo" controlId="product-logo" [error]="errorFor('logo')">
+      <input
+        id="product-logo"
+        class="input"
+        type="url"
+        formControlName="logo"
+        placeholder="https://"
+        [attr.aria-invalid]="!!errorFor('logo')"
+        aria-describedby="product-logo-message"
+      />
+    </app-form-field>
+
+    <app-form-field
+      label="Fecha Liberación"
+      controlId="product-date-release"
+      [error]="errorFor('dateRelease')"
+    >
+      <input
+        id="product-date-release"
+        class="input"
+        type="date"
+        formControlName="dateRelease"
+        [min]="minReleaseDate"
+        [attr.aria-invalid]="!!errorFor('dateRelease')"
+        aria-describedby="product-date-release-message"
+      />
+    </app-form-field>
+
+    <app-form-field
+      label="Fecha Revisión"
+      controlId="product-date-revision"
+      [disabled]="true"
+      [error]="errorFor('dateRevision')"
+      hint="Se calcula automáticamente: un año después de la liberación."
+    >
+      <input
+        id="product-date-revision"
+        class="input"
+        type="date"
+        formControlName="dateRevision"
+        readonly
+        tabindex="-1"
+        [attr.aria-invalid]="!!errorFor('dateRevision')"
+        aria-describedby="product-date-revision-message"
+      />
+    </app-form-field>
+  </div>
+
+  <div class="product-form__actions">
+    <button type="button" class="btn btn--secondary" (click)="onReset()">Reiniciar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="!canSubmit">
+      {{ submitting() ? 'Guardando...' : submitLabel() }}
+    </button>
+  </div>
+</form>
