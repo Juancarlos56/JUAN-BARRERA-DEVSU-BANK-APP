@@ -1,0 +1,113 @@
+.table-wrapper {
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+
+  // Barra de desplazamiento horizontal visible, como en el diseño D1.
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background: var(--color-secondary);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: var(--color-text-muted);
+  }
+}
+
+.table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background: var(--color-surface-muted);
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+
+    &:first-child {
+      text-align: center;
+    }
+  }
+
+  td:first-child {
+    width: 5.5rem;
+    text-align: center;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  &__header {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  &__hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--color-text-disabled);
+    color: var(--color-surface);
+    font-size: 0.6875rem;
+    font-weight: var(--font-weight-bold);
+    cursor: help;
+  }
+
+  &__description {
+    min-width: 14rem;
+    max-width: 20rem;
+  }
+
+  &__row--skeleton td {
+    height: 4rem;
+  }
+
+  &__row--skeleton td:first-child app-skeleton {
+    margin: 0 auto;
+  }
+
+  &__state {
+    padding: var(--space-6) var(--space-4);
+    text-align: center !important;
+  }
+
+  &__state-message {
+    color: var(--color-text-muted);
+
+    &--error {
+      color: var(--color-error);
+    }
+  }
+
+  &__retry {
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-5);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-secondary);
+    color: var(--color-brand);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-secondary-hover);
+    }
+  }
+}

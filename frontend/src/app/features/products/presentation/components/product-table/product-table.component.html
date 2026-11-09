@@ -1,0 +1,62 @@
+<div class="table-wrapper" tabindex="0" role="region" aria-label="Listado de productos financieros">
+  <table class="table" [attr.aria-busy]="loading()">
+    <thead>
+      <tr>
+        @for (column of columns; track column.label) {
+          <th scope="col">
+            <span class="table__header">
+              <span class="table__label">{{ column.label }}</span>
+              @if (column.hint) {
+                <span
+                  class="table__hint"
+                  role="img"
+                  [attr.title]="column.hint"
+                  [attr.aria-label]="column.hint"
+                  >i</span
+                >
+              }
+            </span>
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @if (loading()) {
+        @for (row of skeletonRowIndexes(); track row) {
+          <tr class="table__row--skeleton" data-testid="skeleton-row">
+            <td><app-skeleton shape="circle" width="2.75rem" height="2.75rem" /></td>
+            <td><app-skeleton width="70%" /></td>
+            <td><app-skeleton width="85%" /></td>
+            <td><app-skeleton width="5.5rem" /></td>
+            <td><app-skeleton width="5.5rem" /></td>
+          </tr>
+        }
+      } @else if (error()) {
+        <tr>
+          <td class="table__state" [attr.colspan]="columns.length">
+            <p class="table__state-message table__state-message--error" role="alert">
+              {{ error() }}
+            </p>
+            <button type="button" class="table__retry" (click)="retry.emit()">Reintentar</button>
+          </td>
+        </tr>
+      } @else {
+        @for (product of products(); track product.id) {
+          <tr>
+            <td><app-avatar [src]="product.logo" [name]="product.name" /></td>
+            <td>{{ product.name }}</td>
+            <td class="table__description">{{ product.description }}</td>
+            <td>{{ product.dateRelease | isoDate }}</td>
+            <td>{{ product.dateRevision | isoDate }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="table__state" [attr.colspan]="columns.length">
+              <p class="table__state-message">{{ emptyMessage() }}</p>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>
