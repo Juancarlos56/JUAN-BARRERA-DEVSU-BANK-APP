@@ -1,0 +1,28 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  &__label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &--disabled &__label {
+    color: var(--color-text-disabled);
+  }
+
+  // Reserva el alto del mensaje para que el formulario no "salte" al aparecer errores.
+  &__message {
+    min-height: 1.125rem;
+    font-size: var(--font-size-xs);
+  }
+
+  &__error {
+    color: var(--color-error);
+  }
+
+  &__hint {
+    color: var(--color-text-muted);
+  }
+}

@@ -1,0 +1,49 @@
+// Botones del sistema de diseño (D2, D3, D4).
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: var(--color-accent);
+    color: var(--color-brand);
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+    }
+
+    &:disabled {
+      background: var(--color-accent-disabled);
+      color: var(--color-text-disabled);
+    }
+  }
+
+  &--secondary {
+    background: var(--color-secondary);
+    color: var(--color-brand);
+
+    &:hover:not(:disabled) {
+      background: var(--color-secondary-hover);
+    }
+
+    &:disabled {
+      color: var(--color-text-disabled);
+    }
+  }
+}
