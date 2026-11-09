@@ -25,6 +25,7 @@
       [emptyMessage]="emptyMessage()"
       (retry)="store.load()"
       (edit)="onEdit($event)"
+      (delete)="onDeleteRequest($event)"
     />
 
     <footer class="product-list__footer">
@@ -52,4 +53,14 @@
       </select>
     </footer>
   </div>
+
+  <app-confirm-modal
+    [open]="productToDelete() !== null"
+    [message]="deleteMessage()"
+    confirmLabel="Eliminar"
+    busyLabel="Eliminando..."
+    [busy]="deleting()"
+    (confirmed)="onConfirmDelete()"
+    (cancelled)="onCancelDelete()"
+  />
 </section>
