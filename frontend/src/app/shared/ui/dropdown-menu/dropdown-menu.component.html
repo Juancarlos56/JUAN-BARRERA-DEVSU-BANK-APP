@@ -1,0 +1,39 @@
+<button
+  #trigger
+  type="button"
+  class="dropdown__trigger"
+  aria-haspopup="menu"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-label]="label()"
+  (click)="toggle()"
+>
+  <svg viewBox="0 0 4 16" width="4" height="16" aria-hidden="true">
+    <circle cx="2" cy="2" r="1.6" />
+    <circle cx="2" cy="8" r="1.6" />
+    <circle cx="2" cy="14" r="1.6" />
+  </svg>
+</button>
+
+@if (isOpen()) {
+  <ul
+    class="dropdown__menu"
+    role="menu"
+    [attr.aria-label]="label()"
+    [style.top.px]="position().top"
+    [style.right.px]="position().right"
+  >
+    @for (item of items(); track item.id) {
+      <li role="none">
+        <button
+          type="button"
+          role="menuitem"
+          class="dropdown__item"
+          [class.dropdown__item--danger]="item.variant === 'danger'"
+          (click)="select(item)"
+        >
+          {{ item.label }}
+        </button>
+      </li>
+    }
+  </ul>
+}
