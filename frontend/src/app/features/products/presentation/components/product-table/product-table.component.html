@@ -18,6 +18,9 @@
             </span>
           </th>
         }
+        <th scope="col" class="table__actions">
+          <span class="visually-hidden">Acciones</span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -29,11 +32,12 @@
             <td><app-skeleton width="85%" /></td>
             <td><app-skeleton width="5.5rem" /></td>
             <td><app-skeleton width="5.5rem" /></td>
+            <td></td>
           </tr>
         }
       } @else if (error()) {
         <tr>
-          <td class="table__state" [attr.colspan]="columns.length">
+          <td class="table__state" [attr.colspan]="totalColumns">
             <p class="table__state-message table__state-message--error" role="alert">
               {{ error() }}
             </p>
@@ -48,10 +52,17 @@
             <td class="table__description">{{ product.description }}</td>
             <td>{{ product.dateRelease | isoDate }}</td>
             <td>{{ product.dateRevision | isoDate }}</td>
+            <td class="table__actions">
+              <app-dropdown-menu
+                [items]="rowActions"
+                [label]="'Acciones de ' + product.name"
+                (itemSelected)="onRowAction($event, product)"
+              />
+            </td>
           </tr>
         } @empty {
           <tr>
-            <td class="table__state" [attr.colspan]="columns.length">
+            <td class="table__state" [attr.colspan]="totalColumns">
               <p class="table__state-message">{{ emptyMessage() }}</p>
             </td>
           </tr>

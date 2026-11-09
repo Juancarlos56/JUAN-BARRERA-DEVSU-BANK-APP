@@ -2,6 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 
 import { IsoDatePipe } from '@shared/pipes/iso-date.pipe';
 import { AvatarComponent } from '@shared/ui/avatar/avatar.component';
+import {
+  DropdownMenuComponent,
+  DropdownMenuItem,
+} from '@shared/ui/dropdown-menu/dropdown-menu.component';
 import { SkeletonComponent } from '@shared/ui/skeleton/skeleton.component';
 import { Product } from '../../../domain';
 
@@ -13,7 +17,7 @@ interface ColumnHeader {
 /** Tabla de productos (D1). Componente de presentación: solo recibe datos y emite eventos. */
 @Component({
   selector: 'app-product-table',
-  imports: [AvatarComponent, SkeletonComponent, IsoDatePipe],
+  imports: [AvatarComponent, DropdownMenuComponent, SkeletonComponent, IsoDatePipe],
   templateUrl: './product-table.component.html',
   styleUrl: './product-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +29,7 @@ export class ProductTableComponent {
   readonly skeletonRows = input(5);
   readonly emptyMessage = input('No hay productos registrados.');
   readonly retry = output<void>();
+  readonly edit = output<Product>();
 
   protected readonly columns: readonly ColumnHeader[] = [
     { label: 'Logo' },
@@ -36,7 +41,16 @@ export class ProductTableComponent {
       hint: 'Fecha de revisión para cambiar términos y condiciones',
     },
   ];
+  /** Columnas de datos + columna de acciones (D3). */
+  protected readonly totalColumns = this.columns.length + 1;
+  protected readonly rowActions: readonly DropdownMenuItem[] = [{ id: 'edit', label: 'Editar' }];
   protected readonly skeletonRowIndexes = computed(() =>
     Array.from({ length: this.skeletonRows() }, (_, index) => index),
   );
+
+  protected onRowAction(action: string, product: Product): void {
+    if (action === 'edit') {
+      this.edit.emit(product);
+    }
+  }
 }

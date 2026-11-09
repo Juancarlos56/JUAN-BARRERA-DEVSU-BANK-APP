@@ -53,7 +53,7 @@ describe('ProductTableComponent', () => {
     const cells = Array.from(bodyRows()[0].querySelectorAll('td')).map((td) =>
       td.textContent!.trim(),
     );
-    expect(cells.slice(1)).toEqual([
+    expect(cells.slice(1, 5)).toEqual([
       'Tarjetas de Crédito',
       'Tarjeta de consumo bajo la modalidad de crédito',
       '01/02/2025',
@@ -73,6 +73,46 @@ describe('ProductTableComponent', () => {
     render({ emptyMessage: 'No se encontraron productos.' });
 
     expect(element.textContent).toContain('No se encontraron productos.');
+  });
+
+  it('muestra un menú de acciones por producto con la opción Editar (D3)', () => {
+    render({ products: [buildProduct(), buildProduct({ id: 'otro', name: 'Cuenta Ahorro' })] });
+
+    const menus = element.querySelectorAll('tbody app-dropdown-menu');
+    expect(menus).toHaveLength(2);
+    expect(menus[1].querySelector('button')!.getAttribute('aria-label')).toBe(
+      'Acciones de Cuenta Ahorro',
+    );
+  });
+
+  it('emite edit con el producto al elegir Editar', () => {
+    const edited: Product[] = [];
+    fixture.componentInstance.edit.subscribe((product) => edited.push(product));
+    const product = buildProduct();
+    render({ products: [product] });
+
+    element.querySelector<HTMLButtonElement>('.dropdown__trigger')!.click();
+    fixture.detectChanges();
+    element.querySelector<HTMLButtonElement>('[role="menuitem"]')!.click();
+
+    expect(edited).toEqual([product]);
+  });
+
+  it('ignora acciones desconocidas', () => {
+    const edit = jest.fn();
+    fixture.componentInstance.edit.subscribe(edit);
+    render({ products: [buildProduct()] });
+
+    const menu = fixture.debugElement.query((node) => node.name === 'app-dropdown-menu');
+    menu.triggerEventHandler('itemSelected', 'archivar');
+
+    expect(edit).not.toHaveBeenCalled();
+  });
+
+  it('el estado vacío ocupa también la columna de acciones', () => {
+    render({});
+
+    expect(element.querySelector('.table__state')!.getAttribute('colspan')).toBe('6');
   });
 
   it('muestra el error y emite reintentar', () => {

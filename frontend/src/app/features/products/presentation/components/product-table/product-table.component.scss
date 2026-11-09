@@ -70,6 +70,11 @@
     cursor: help;
   }
 
+  &__actions {
+    width: 3.5rem;
+    text-align: center !important;
+  }
+
   &__description {
     min-width: 14rem;
     max-width: 20rem;
