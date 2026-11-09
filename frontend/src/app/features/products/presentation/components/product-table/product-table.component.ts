@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OutputEmitterRef,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 
 import { IsoDatePipe } from '@shared/pipes/iso-date.pipe';
 import { AvatarComponent } from '@shared/ui/avatar/avatar.component';
@@ -30,6 +37,7 @@ export class ProductTableComponent {
   readonly emptyMessage = input('No hay productos registrados.');
   readonly retry = output<void>();
   readonly edit = output<Product>();
+  readonly delete = output<Product>();
 
   protected readonly columns: readonly ColumnHeader[] = [
     { label: 'Logo' },
@@ -43,14 +51,21 @@ export class ProductTableComponent {
   ];
   /** Columnas de datos + columna de acciones (D3). */
   protected readonly totalColumns = this.columns.length + 1;
-  protected readonly rowActions: readonly DropdownMenuItem[] = [{ id: 'edit', label: 'Editar' }];
+  protected readonly rowActions: readonly DropdownMenuItem[] = [
+    { id: 'edit', label: 'Editar' },
+    { id: 'delete', label: 'Eliminar', variant: 'danger' },
+  ];
   protected readonly skeletonRowIndexes = computed(() =>
     Array.from({ length: this.skeletonRows() }, (_, index) => index),
   );
 
+  /** Relaciona cada opción del menú con el evento que emite (agregar una acción no toca la lógica). */
+  private readonly actionOutputs: Readonly<Record<string, OutputEmitterRef<Product>>> = {
+    edit: this.edit,
+    delete: this.delete,
+  };
+
   protected onRowAction(action: string, product: Product): void {
-    if (action === 'edit') {
-      this.edit.emit(product);
-    }
+    this.actionOutputs[action]?.emit(product);
   }
 }

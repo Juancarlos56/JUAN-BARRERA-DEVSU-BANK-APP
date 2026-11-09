@@ -98,15 +98,33 @@ describe('ProductTableComponent', () => {
     expect(edited).toEqual([product]);
   });
 
+  it('ofrece la opción Eliminar y emite delete con el producto (F6)', () => {
+    const deleted: Product[] = [];
+    fixture.componentInstance.delete.subscribe((product) => deleted.push(product));
+    const product = buildProduct();
+    render({ products: [product] });
+
+    element.querySelector<HTMLButtonElement>('.dropdown__trigger')!.click();
+    fixture.detectChanges();
+    const options = element.querySelectorAll<HTMLButtonElement>('[role="menuitem"]');
+    expect(Array.from(options).map((o) => o.textContent!.trim())).toEqual(['Editar', 'Eliminar']);
+    options[1].click();
+
+    expect(deleted).toEqual([product]);
+  });
+
   it('ignora acciones desconocidas', () => {
     const edit = jest.fn();
+    const remove = jest.fn();
     fixture.componentInstance.edit.subscribe(edit);
+    fixture.componentInstance.delete.subscribe(remove);
     render({ products: [buildProduct()] });
 
     const menu = fixture.debugElement.query((node) => node.name === 'app-dropdown-menu');
     menu.triggerEventHandler('itemSelected', 'archivar');
 
     expect(edit).not.toHaveBeenCalled();
+    expect(remove).not.toHaveBeenCalled();
   });
 
   it('el estado vacío ocupa también la columna de acciones', () => {
