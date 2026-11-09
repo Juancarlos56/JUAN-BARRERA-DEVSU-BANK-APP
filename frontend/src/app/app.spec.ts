@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+
 import { App } from './app';
 
 describe('App', () => {
@@ -10,15 +11,13 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    expect(fixture.componentInstance).toBeTruthy();
-  });
-
-  it('should render the router outlet', () => {
+  it('renderiza el header, el contenido enrutado y el contenedor de notificaciones', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('router-outlet')).not.toBeNull();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('app-header')).not.toBeNull();
+    expect(element.querySelector('main router-outlet')).not.toBeNull();
+    expect(element.querySelector('app-toast-container')).not.toBeNull();
   });
 });
